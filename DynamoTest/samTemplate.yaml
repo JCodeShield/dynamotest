@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: AWS Serverless WebApi
+
+Globals:
+  Function:
+    Timeout: 10
+
+Resources:
+  ServerlessWebApi:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ServerlessWebApi
+      CodeUri: DynamoTest/bin/Debug/netcoreapp2.1/publish
+      Policies: AWSLambdaFullAccess
+      Handler: DynamoTest::DynamoTest.LambdaEntryPoint::FunctionHandlerAsync
+      Runtime: dotnetcore2.1
+      Events:
+        PutResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY

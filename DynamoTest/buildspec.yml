@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - dotnet restore
+      - dotnet publish
+      - aws cloudformation package --template-file samTemplate.yaml --s3-bucket motto-dynamotest --output-template-file outputSamTemplate.yaml
+artifacts:
+  type: zip
+  files:
+    - samTemplate.yaml
+    - outputSamTemplate.yaml
+
+
+      
