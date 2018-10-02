@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using DynamoTest.DB;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DynamoTest.Controllers
@@ -18,9 +19,14 @@ namespace DynamoTest.Controllers
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<string> GetAsync(int id)
         {
+            var repo = new DynamoRepo();
+
+            await repo.GetStuffFromDynamoAsync();
+
             return "value";
+
         }
 
         // POST api/values
