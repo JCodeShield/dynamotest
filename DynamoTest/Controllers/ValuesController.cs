@@ -36,8 +36,13 @@ namespace DynamoTest.Controllers
 
             var user = await repo.Get(id);
 
-            LambdaLogger.Log($"Found user: {id}");
+            if (user == null) {
+                LambdaLogger.Log($"User: {id} not found");
+                Response.StatusCode = NotFound().StatusCode;
+                return null;
+            }
 
+            LambdaLogger.Log($"Found User: {id}");
             return user.name;
         }
 
@@ -49,16 +54,16 @@ namespace DynamoTest.Controllers
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]string name)
         {
-            LambdaLogger.Log($"Request for new user: {value}");
+            LambdaLogger.Log($"Request for new user: {name}");
 
             var repo = new DynamoRepo();
 
             var user = new User
             {
                 id = new Random().Next().ToString(),
-                name = value
+                name = name
             };
 
             repo.Save(user).Wait();
