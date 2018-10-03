@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DynamoTest.Controllers
 {
     [Route("api/[controller]")]
-    public class UserssController : Controller
+    public class UsersController : Controller
     {
         // GET api/users
         [HttpGet]
