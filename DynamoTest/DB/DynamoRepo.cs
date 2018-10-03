@@ -57,19 +57,15 @@ namespace DynamoTest.DB
         {
             const string tableName = "testTable";
 
-            log("creating client...");
-
+            log("Creating client...");
             var client = new AmazonDynamoDBClient(
                 _dynamoDbCredential.accessKey, 
                 _dynamoDbCredential.secretKey);
+            log("Finished creating client");
 
-            log("created client");
-
-            log("ensuring table exists...");
-
+            log("Ensuring table exists...");
             await EnsureTableExists(client, tableName);
-
-            log("ensured table exists");
+            log("Finished ensuring table exists");
 
             await WaitForTableToBeReady(client, tableName);
 
@@ -94,11 +90,8 @@ namespace DynamoTest.DB
 
         public async Task EnsureTableExists(AmazonDynamoDBClient client, String tableName)
         {
-            log("Starting ListTablesAsync");
-
             var tableResponse = client.ListTablesAsync().Result;
 
-            log("Finished ListTablesAsync");
             if (!tableResponse.TableNames.Contains(tableName))
             {
                 log($"List of tables did not contains {tableName}... going to create it");
@@ -122,13 +115,14 @@ namespace DynamoTest.DB
 
         public async Task WaitForTableToBeReady(AmazonDynamoDBClient client, String tableName)
         {
+            // takes longer than the 20s timeout that was set for the whole Lambda
 
             bool isTableAvailable = false;
             while (!isTableAvailable)
             {
-                Thread.Sleep(5000);
                 var tableStatus = await client.DescribeTableAsync(tableName);
                 isTableAvailable = tableStatus.Table.TableStatus == "ACTIVE";
+                Thread.Sleep(5000);
             }
         }
     }

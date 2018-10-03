@@ -4,7 +4,7 @@ Description: AWS Serverless WebApi
 
 Globals:
   Function:
-    Timeout: 20
+    Timeout: 60
 
 Resources:
   ServerlessWebApi:
