@@ -107,15 +107,16 @@ namespace DynamoTest.DB
                     new CreateTableRequest
                     {
                         TableName = "testTable",
-                        KeySchema = new List<KeySchemaElement> { new KeySchemaElement("id", KeyType.HASH) },
+                        KeySchema = new List<KeySchemaElement> {
+                            new KeySchemaElement("id", KeyType.HASH) },
+                        AttributeDefinitions = new List<AttributeDefinition> {
+                            new AttributeDefinition("id", ScalarAttributeType.S)},
                         ProvisionedThroughput = new ProvisionedThroughput
                         {
                             ReadCapacityUnits = 3,
                             WriteCapacityUnits = 1
                         }
                     });
-
-
             }
         }
 
