@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Amazon.DynamoDBv2;
@@ -8,9 +12,18 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Amazon.Lambda.Core;
+using DynamoTest.Services;
+
 
 namespace DynamoTest.DB
 {
+
+    [DataContract]
+    class DynamoDbCredential {
+        [DataMember] public string accessKey { get; set; }
+        [DataMember] public string secretKey { get; set; }
+        [DataMember] public string serviceUrl { get; set; }
+    }
 
     public class User
     {
@@ -20,18 +33,22 @@ namespace DynamoTest.DB
 
     public class DynamoRepo
     {
-        private string _accessKey;
+        private DynamoDbCredential _dynamoDbCredential;
         private string _secretKey;
         private string _serviceUrl;
 
-        public DynamoRepo() {
-            _accessKey = Environment.GetEnvironmentVariable("AccessKey");
-            _secretKey = Environment.GetEnvironmentVariable("SecretKey");
-            _serviceUrl = Environment.GetEnvironmentVariable("ServiceURL");
+        private const string dynamo_iam_user_secretName = "dynamo_iam_user";
 
-            log($"---> _accessKey {_accessKey}");
-            log($"---> _secretKey {_secretKey}");
-            log($"---> _serviceUrl {_serviceUrl}");
+        public DynamoRepo() {
+            var secretJson = SecretService.GetSecret(dynamo_iam_user_secretName);
+
+            MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(secretJson));
+            DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DynamoDbCredential));
+            _dynamoDbCredential = ser.ReadObject(ms) as DynamoDbCredential;
+
+            log($"---> _accessKey  {_dynamoDbCredential.accessKey}");
+            log($"---> _secretKey  {_dynamoDbCredential.secretKey}");
+            log($"---> _serviceUrl {_dynamoDbCredential.serviceUrl}");
         }
 
         private void log(string msg)
@@ -45,7 +62,9 @@ namespace DynamoTest.DB
 
             log("creating client...");
 
-            var client = new AmazonDynamoDBClient(_accessKey, _secretKey);
+            var client = new AmazonDynamoDBClient(
+                _dynamoDbCredential.accessKey, 
+                _dynamoDbCredential.secretKey);
 
             log("created client");
 
