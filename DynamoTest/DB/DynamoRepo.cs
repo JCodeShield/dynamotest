@@ -93,7 +93,7 @@ namespace DynamoTest.DB
             LambdaLogger.Log($"retrieved record has name: {savedState.name}");
         }
 
-        public async Task EnsureTableExists(AmazonDynamoDBClient client, String tableName)
+        public async Task EnsureTableExists(AmazonDynamoDBClient client, string tableName)
         {
             var tableResponse = client.ListTablesAsync().Result;
 
@@ -104,7 +104,7 @@ namespace DynamoTest.DB
                 await client.CreateTableAsync(
                     new CreateTableRequest
                     {
-                        TableName = "testTable",
+                        TableName = tableName,
                         KeySchema = new List<KeySchemaElement> {
                             new KeySchemaElement("id", KeyType.HASH) },
                         AttributeDefinitions = new List<AttributeDefinition> {
