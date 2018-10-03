@@ -28,10 +28,6 @@ namespace DynamoTest.Controllers
             LambdaLogger.Log("Instantiating DynamoRepo");
             var repo = new DynamoRepo();
 
-            repo.LoadSecrets();
-
-
-
             LambdaLogger.Log("Starting GetStuffFromDynamoAsync");
             await repo.GetStuffFromDynamoAsync();
 

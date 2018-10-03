@@ -34,9 +34,9 @@ namespace DynamoTest.Services
             IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.USWest2);
 
             GetSecretValueRequest request = new GetSecretValueRequest();
-            //request.SecretId = secretName;
+            request.SecretId = secretName;
             request.VersionStage = "AWSCURRENT"; // VersionStage defaults to AWSCURRENT if unspecified.
-            request.SecretId = "arn:aws:secretsmanager:us-west-2:809794767795:secret:dynamo_iam_user-XN2bM3";
+            //request.SecretId = "arn:aws:secretsmanager:us-west-2:809794767795:secret:dynamo_iam_user-XN2bM3";
             GetSecretValueResponse response = null;
 
             // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.

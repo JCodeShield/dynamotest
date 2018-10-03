@@ -38,22 +38,14 @@ namespace DynamoTest.DB
         private const string dynamo_iam_user_secretName = "dynamo_iam_user";
 
         public DynamoRepo() {
-            log($"Init dynamoRepo");
-        }
+            log("Initializing DynamoRepo");
 
-        public void LoadSecrets()
-        {
-            log($"Get secret: {dynamo_iam_user_secretName}");
             var secretJson = SecretService.GetSecret(dynamo_iam_user_secretName).Result;
-            log($"Got secret: {secretJson}");
+            log("Retrieved Dynamo DB credentials");
 
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(secretJson));
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DynamoDbCredential));
             _dynamoDbCredential = ser.ReadObject(ms) as DynamoDbCredential;
-
-            log($"---> _accessKey  {_dynamoDbCredential.accessKey}");
-            log($"---> _secretKey  {_dynamoDbCredential.secretKey}");
-            log($"---> _serviceUrl {_dynamoDbCredential.serviceUrl}");
         }
 
         private void log(string msg)
@@ -102,9 +94,15 @@ namespace DynamoTest.DB
 
         public async Task EnsureTableExists(AmazonDynamoDBClient client, String tableName)
         {
-            var tableResponse = await client.ListTablesAsync();
+            log("Starting ListTablesAsync");
+
+            var tableResponse = client.ListTablesAsync().Result;
+
+            log("Finished ListTablesAsync");
             if (!tableResponse.TableNames.Contains(tableName))
             {
+                log($"List of tables did not contains {tableName}... going to create it");
+
                 await client.CreateTableAsync(
                     new CreateTableRequest
                     {
