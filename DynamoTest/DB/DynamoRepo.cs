@@ -34,13 +34,15 @@ namespace DynamoTest.DB
     public class DynamoRepo
     {
         private DynamoDbCredential _dynamoDbCredential;
-        private string _secretKey;
-        private string _serviceUrl;
 
         private const string dynamo_iam_user_secretName = "dynamo_iam_user";
 
         public DynamoRepo() {
+            log($"Init dynamoRepo");
+            
+            log($"Get secret");
             var secretJson = SecretService.GetSecret(dynamo_iam_user_secretName);
+            log($"Got secret: {secretJson}");
 
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(secretJson));
             DataContractJsonSerializer ser = new DataContractJsonSerializer(typeof(DynamoDbCredential));

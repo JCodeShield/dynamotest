@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Amazon.Lambda.Core;
 using DynamoTest.DB;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,8 +22,15 @@ namespace DynamoTest.Controllers
         [HttpGet("{id}")]
         public async Task<string> GetAsync(int id)
         {
+
+            LambdaLogger.Log("!!! api/values/1 called");
+
+            LambdaLogger.Log("Instantiating DynamoRepo");
             var repo = new DynamoRepo();
 
+            
+
+            LambdaLogger.Log("Starting GetStuffFromDynamoAsync");
             await repo.GetStuffFromDynamoAsync();
 
             return "value";

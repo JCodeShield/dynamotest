@@ -1,4 +1,5 @@
 ﻿using Amazon;
+using Amazon.Lambda.Core;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 
@@ -29,8 +30,6 @@ namespace DynamoTest.Services
         public static string GetSecret(string secretName)
         {
             string region = "us-west-2";
-            string secret = "";
-
             IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
 
             GetSecretValueRequest request = new GetSecretValueRequest();
@@ -51,47 +50,49 @@ namespace DynamoTest.Services
             {
                 // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
                 // Deal with the exception here, and/or rethrow at your discretion.
+                LambdaLogger.Log("DecryptionFailureException ocurred");
                 throw;
             }
             catch (InternalServiceErrorException e)
             {
                 // An error occurred on the server side.
                 // Deal with the exception here, and/or rethrow at your discretion.
+                LambdaLogger.Log("InternalServiceErrorException ocurred");
                 throw;
             }
             catch (InvalidParameterException e)
             {
                 // You provided an invalid value for a parameter.
                 // Deal with the exception here, and/or rethrow at your discretion
+                LambdaLogger.Log("The request had invalid params: " + e.Message);
+
                 throw;
             }
             catch (InvalidRequestException e)
             {
                 // You provided a parameter value that is not valid for the current state of the resource.
                 // Deal with the exception here, and/or rethrow at your discretion.
+                LambdaLogger.Log("The request was invalid due to: " + e.Message);
+
                 throw;
             }
             catch (ResourceNotFoundException e)
             {
                 // We can't find the resource that you asked for.
                 // Deal with the exception here, and/or rethrow at your discretion.
+                LambdaLogger.Log("The requested secret " + secretName + " was not found");
+
                 throw;
             }
             catch (System.AggregateException ae)
             {
                 // More than one of the above exceptions were triggered.
                 // Deal with the exception here, and/or rethrow at your discretion.
+                LambdaLogger.Log("AggregateException");
                 throw;
             }
 
-            // Decrypts secret using the associated KMS CMK.
-            // Depending on whether the secret is a string or binary, one of these fields will be populated.
-            if (response.SecretString != null)
-            {
-                secret = response.SecretString;
-            }
-
-            return secret;
+            return response?.SecretString;
         }
     }
 }
