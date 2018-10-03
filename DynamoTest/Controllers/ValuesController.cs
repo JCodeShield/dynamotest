@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
 using DynamoTest.DB;
+using DynamoTest.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DynamoTest.Controllers
@@ -15,24 +16,29 @@ namespace DynamoTest.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            LambdaLogger.Log($"Request for getting all users");
+
+            var repo = new DynamoRepo();
+
+            var users = repo.Get().Result;
+            LambdaLogger.Log($"User list retrieved");
+
+            return users.Select(x => x.name).ToList();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public async Task<string> GetAsync(int id)
+        public async Task<string> GetAsync(string id)
         {
+            LambdaLogger.Log($"Request for getting user: {id}");
 
-            LambdaLogger.Log("!!! api/values/1 called");
-
-            LambdaLogger.Log("Instantiating DynamoRepo");
             var repo = new DynamoRepo();
 
-            LambdaLogger.Log("Starting GetStuffFromDynamoAsync");
-            await repo.GetStuffFromDynamoAsync();
+            var user = await repo.Get(id);
 
-            return "value";
+            LambdaLogger.Log($"Found user: {id}");
 
+            return user.name;
         }
 
         // POST api/values
@@ -45,6 +51,19 @@ namespace DynamoTest.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
+            LambdaLogger.Log($"Request for new user: {value}");
+
+            var repo = new DynamoRepo();
+
+            var user = new User
+            {
+                id = new Random().Next().ToString(),
+                name = value
+            };
+
+            repo.Save(user).Wait();
+
+            LambdaLogger.Log($"New user saved: {user.id} -> {user.name}");
         }
 
         // DELETE api/values/5
