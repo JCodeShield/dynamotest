@@ -2,6 +2,8 @@
 using Amazon.Lambda.Core;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
+using System;
+using System.Threading.Tasks;
 
 namespace DynamoTest.Services
 {
@@ -27,15 +29,14 @@ namespace DynamoTest.Services
         /*
          * AWSSDK.SecretsManager version="3.3.0" targetFramework="net45"
          */
-        public static string GetSecret(string secretName)
+        public  static async Task<string> GetSecret(string secretName)
         {
-            string region = "us-west-2";
-            IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.GetBySystemName(region));
+            IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.USWest2);
 
             GetSecretValueRequest request = new GetSecretValueRequest();
-            request.SecretId = secretName;
+            //request.SecretId = secretName;
             request.VersionStage = "AWSCURRENT"; // VersionStage defaults to AWSCURRENT if unspecified.
-
+            request.SecretId = "arn:aws:secretsmanager:us-west-2:809794767795:secret:dynamo_iam_user-XN2bM3";
             GetSecretValueResponse response = null;
 
             // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
@@ -44,7 +45,7 @@ namespace DynamoTest.Services
 
             try
             {
-                response = client.GetSecretValueAsync(request).Result;
+                response = await client.GetSecretValueAsync(request);
             }
             catch (DecryptionFailureException e)
             {
@@ -93,6 +94,11 @@ namespace DynamoTest.Services
             }
 
             return response?.SecretString;
+        }
+
+        private static RegionEndpoint AmazonSecretsManagerConfig(RegionEndpoint uSWest2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

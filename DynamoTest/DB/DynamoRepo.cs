@@ -39,9 +39,12 @@ namespace DynamoTest.DB
 
         public DynamoRepo() {
             log($"Init dynamoRepo");
-            
-            log($"Get secret");
-            var secretJson = SecretService.GetSecret(dynamo_iam_user_secretName);
+        }
+
+        public void LoadSecrets()
+        {
+            log($"Get secret: {dynamo_iam_user_secretName}");
+            var secretJson = SecretService.GetSecret(dynamo_iam_user_secretName).Result;
             log($"Got secret: {secretJson}");
 
             MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(secretJson));
