@@ -69,7 +69,9 @@ namespace DynamoTest.DB
 
             await WaitForTableToBeReady(client, tableName);
 
+            log("Creating DBcontext...");
             var dbContext = new DynamoDBContext(client);
+            log("Finished creating DBcontext...");
 
             var someTestDocument = new User()
             {
@@ -77,13 +79,16 @@ namespace DynamoTest.DB
                 name = "Tom"
             };
 
+            log("Saving document...");
             await dbContext.SaveAsync(someTestDocument);
+            log("Finishes saving document...");
 
-            //LambdaLogger.Log
+            log("Retrieving document...");
             List<ScanCondition> conditions = new List<ScanCondition>();
             conditions.Add(new ScanCondition("id", ScanOperator.Equal, someTestDocument.id));
             var allDocs = await dbContext.ScanAsync<User>(conditions).GetRemainingAsync();
             var savedState = allDocs.FirstOrDefault();
+            log("Finished retrieving document...");
 
             LambdaLogger.Log($"retrieved record has name: {savedState.name}");
         }
@@ -115,15 +120,17 @@ namespace DynamoTest.DB
 
         public async Task WaitForTableToBeReady(AmazonDynamoDBClient client, String tableName)
         {
-            // takes longer than the 20s timeout that was set for the whole Lambda
+            log("Waiting for table to be ready.");
 
             bool isTableAvailable = false;
-            while (!isTableAvailable)
+            do
             {
                 var tableStatus = await client.DescribeTableAsync(tableName);
                 isTableAvailable = tableStatus.Table.TableStatus == "ACTIVE";
-                Thread.Sleep(5000);
-            }
+                if (!isTableAvailable) { log("Table not yet ready."); Thread.Sleep(5000); }
+            } while (!isTableAvailable);
+
+            log("Table is ready.");
         }
     }
 }
