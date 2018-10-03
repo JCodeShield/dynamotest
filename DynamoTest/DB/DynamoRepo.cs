@@ -55,7 +55,7 @@ namespace DynamoTest.DB
 
         public async Task GetStuffFromDynamoAsync()
         {
-            const string tableName = "testTable";
+            const string tableName = "User";
 
             log("Creating client...");
             var client = new AmazonDynamoDBClient(
