@@ -35,5 +35,17 @@ namespace DynamoTest.Controllers
 
             return msg;
         }
+
+        // PUT api/test
+        [HttpPut]
+        public string Put()
+        {
+            LambdaLogger.Log($"Credential-only Test invoked");
+            
+            var secretJson = SecretService.GetSecret("dynamo_iam_user").Result;
+            LambdaLogger.Log($"Secret received");
+
+            return secretJson;
+        }
     }
 }
