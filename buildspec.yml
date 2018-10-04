@@ -10,6 +10,3 @@ artifacts:
   files:
     - samTemplate.yaml
     - outputSamTemplate.yaml
-
-
-      
