@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DynamoTest.Controllers
 {
+    [Route("api/[controller]")]
     public class TestController : Controller
     {
         private static readonly HttpClient client = new HttpClient();
 
+        // GET api/test
         [HttpGet]
         public async Task<string> Get()
         {
