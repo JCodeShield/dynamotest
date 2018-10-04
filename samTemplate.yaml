@@ -12,7 +12,12 @@ Resources:
     Properties:
       FunctionName: ServerlessWebApi
       CodeUri: DynamoTest/bin/Debug/netcoreapp2.1/publish
-      Policies: AWSLambdaFullAccess
+      Policies: 
+        - Statement:
+          - Action: [ "secretsmanager:GetSecretValue" ]
+            Effect: Allow
+            Resource: "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:dynamo_iam_user-XN2bM3"
+        - AWSLambdaFullAccess
       Handler: DynamoTest::DynamoTest.LambdaEntryPoint::FunctionHandlerAsync
       Runtime: dotnetcore2.1
       Events:
