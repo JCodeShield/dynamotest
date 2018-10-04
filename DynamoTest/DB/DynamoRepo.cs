@@ -17,7 +17,7 @@ using DynamoTest.Services;
 
 namespace DynamoTest.DB
 {
-    public class DynamoRepo
+    public class DynamoRepo : IDynamoRepo
     {
         private DynamoDbCredential _dynamoDbCredential;
         private AmazonDynamoDBClient _client;
@@ -117,7 +117,7 @@ namespace DynamoTest.DB
         //    LambdaLogger.Log($"retrieved record has name: {savedState.name}");
         //}
 
-        public async Task EnsureTableExists(AmazonDynamoDBClient client, string tableName)
+        private async Task EnsureTableExists(AmazonDynamoDBClient client, string tableName)
         {
             var tableResponse = client.ListTablesAsync().Result;
 
@@ -142,7 +142,7 @@ namespace DynamoTest.DB
             }
         }
 
-        public async Task WaitForTableToBeReady(AmazonDynamoDBClient client, String tableName)
+        private async Task WaitForTableToBeReady(AmazonDynamoDBClient client, String tableName)
         {
             log("Waiting for table to be ready.");
 

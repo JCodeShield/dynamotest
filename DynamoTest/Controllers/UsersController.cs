@@ -11,6 +11,12 @@ namespace DynamoTest.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
+        private DynamoRepo _repo;
+
+        public UsersController(DynamoRepo repo) {
+            _repo = repo;
+        }
+
         // GET api/users
         [HttpGet]
         public IEnumerable<string> Get()
