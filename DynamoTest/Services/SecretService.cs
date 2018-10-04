@@ -29,7 +29,7 @@ namespace DynamoTest.Services
         /*
          * AWSSDK.SecretsManager version="3.3.0" targetFramework="net45"
          */
-        public  static async Task<string> GetSecret(string secretName)
+        public static async Task<string> GetSecret(string secretName)
         {
             IAmazonSecretsManager client = new AmazonSecretsManagerClient(RegionEndpoint.USWest2);
 

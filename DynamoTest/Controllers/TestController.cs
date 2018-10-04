@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Amazon.Lambda.Core;
+using DynamoTest.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DynamoTest.Controllers
@@ -27,6 +28,10 @@ namespace DynamoTest.Controllers
             var msg = await stringTask;
 
             LambdaLogger.Log($"Retrieved string from Github");
+
+            LambdaLogger.Log($"Now try to get the secret...");
+            var secretJson = SecretService.GetSecret("dynamo_iam_user").Result;
+            LambdaLogger.Log($"Secret received");
 
             return msg;
         }
