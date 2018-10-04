@@ -11,9 +11,9 @@ namespace DynamoTest.Controllers
     [Route("api/[controller]")]
     public class UsersController : Controller
     {
-        private DynamoRepo _repo;
+        private IDynamoRepo _repo;
 
-        public UsersController(DynamoRepo repo) {
+        public UsersController(IDynamoRepo repo) {
             _repo = repo;
         }
 
@@ -22,10 +22,7 @@ namespace DynamoTest.Controllers
         public IEnumerable<string> Get()
         {
             LambdaLogger.Log($"Request for getting all users");
-
-            var repo = new DynamoRepo();
-
-            var users = repo.Get().Result;
+            var users = _repo.Get().Result;
             LambdaLogger.Log($"User list retrieved");
 
             return users.Select(x => x.name).ToList();
@@ -37,9 +34,7 @@ namespace DynamoTest.Controllers
         {
             LambdaLogger.Log($"Request for getting user: {id}");
 
-            var repo = new DynamoRepo();
-
-            var user = await repo.Get(id);
+            var user = await _repo.Get(id);
 
             if (user == null) {
                 LambdaLogger.Log($"User: {id} not found");
@@ -61,9 +56,7 @@ namespace DynamoTest.Controllers
         [HttpPut()]
         public void Put([FromBody]User user)
         {
-            var repo = new DynamoRepo();
-
-            repo.Save(user).Wait();
+            _repo.Save(user).Wait();
 
             LambdaLogger.Log($"New user saved: {user.id} -> {user.name}");
         }
