@@ -10,6 +10,7 @@
     <PackageReference Include="Amazon.Lambda.DynamoDBEvents" Version="1.0.1" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.14.3" />
     <PackageReference Include="AWSSDK.SecretsManager" Version="3.3.2.8" />
+    <PackageReference Include="AWSXRayRecorder.Handlers.AspNetCore" Version="2.3.0-beta" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
 
     <PackageReference Include="AWSSDK.S3" Version="3.3.18.6" />
